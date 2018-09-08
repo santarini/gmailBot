@@ -46,6 +46,9 @@ emailRow = driver.find_element_by_xpath('//*[@id="' + idList[0] + '"]')
 
 emailRow.click()
 
+html = driver.page_source
+soup = bs(html, 'lxml')
+emailContent = soup.findAll('table', {'role': 'presentation'})
 
 #len(idList)
 
