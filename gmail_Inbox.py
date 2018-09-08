@@ -51,9 +51,12 @@ emailRow = driver.find_element_by_xpath('//*[@id="' + idList[0] + '"]')
 
 emailRow.click()
 
+time.sleep(1)
+
 #identify email body
 
 html = driver.page_source
+page_body = driver.find_element_by_tag_name('body')
 soup = bs(html, 'lxml')
 emailContent = soup.findAll('table', {'role': 'presentation'})
 
@@ -70,16 +73,25 @@ for row in emailContent:
      for line in row.findAll('h2'):
           print(line)
 
+#download attachment
+for row in soup.findAll():
+     if row.has_attr('download_url'):
+          attachment = row
+          aTag = attachment.findAll('a')[0]
+          print(aTag.get('href'))
+
+          #download url to folder
+
 
 #find label button
 page_body = driver.find_element_by_tag_name('body')
-page_body.send_keys('v')
-
-#navigate to pertinent
-pertinent = soup.findAll('div', {'title': 'Pertinent'})
-
-#navigate to nonpertinent
-nonPertinent = soup.findAll('div', {'title': 'NonPertinent'})
+##page_body.send_keys('v')
+##
+###navigate to pertinent
+##pertinent = soup.findAll('div', {'title': 'Pertinent'})
+##
+###navigate to nonpertinent
+##nonPertinent = soup.findAll('div', {'title': 'NonPertinent'})
 
 #pertinent.click()
 #nonPertinent.click()
@@ -90,12 +102,7 @@ nonPertinent = soup.findAll('div', {'title': 'NonPertinent'})
 
 
 
-#download attachment
-for row in emailContent:
-     for line in row.findAll():
-          if line.has_attr('download_url'):
-               downloadLink = line.findNext('a')
-               print(line.get('href')))
+
 
 #len(idList)
 
