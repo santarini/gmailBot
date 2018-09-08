@@ -8,7 +8,7 @@ from selenium.webdriver.support.select import Select
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 import pyautogui
-import BeautifulSoup as bs
+from bs4 import BeautifulSoup as bs
 
 
 #surfacebook and work computer webdriver path
@@ -32,10 +32,12 @@ nextButton = driver.find_element_by_id('passwordNext')
 nextButton.click()
 
 time.sleep(5)
-page_body = driver.find_element_by_tag_name('body')
+html = driver.page_source
 
-tables = page_body.findAll("table")
+soup = bs(html, 'lxml')
 
-for table in tables:
-     if table.findParent("table") is None:
-         print(str(table))
+table = soup.findAll('table')[3]
+for row in table.findAll('tr'):
+     for elem in row.findAll():
+          if elem.has_attr('email'):
+               print(elem)
