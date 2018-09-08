@@ -91,7 +91,11 @@ nonPertinent = soup.findAll('div', {'title': 'NonPertinent'})
 
 
 #download attachment
-
+for row in emailContent:
+     for line in row.findAll():
+          if line.has_attr('download_url'):
+               downloadLink = line.findNext('a')
+               print(line.get('href')))
 
 #len(idList)
 
