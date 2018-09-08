@@ -49,6 +49,11 @@ emailRow.click()
 html = driver.page_source
 soup = bs(html, 'lxml')
 emailContent = soup.findAll('table', {'role': 'presentation'})
+ 
+for row in emailContent:
+     for line in row.findAll():
+          if line.has_attr('email'):
+               print(line)
 
 #len(idList)
 
