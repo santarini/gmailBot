@@ -19,6 +19,7 @@ driver = webdriver.Chrome('C:\Program Files\Python\Python36\chromedriver.exe', c
 driver.set_window_size(1900, 1900)
 driver.set_window_position(0, 0)
 driver.get('https://mail.google.com/mail/u/0/#inbox')
+actionChains = ActionChains(driver)
 time.sleep(5)
 
 #login to gmail
@@ -65,7 +66,7 @@ def inboxScan(driver):
           for row in emailContent:
                for line in row.findAll():
                     if line.has_attr('email'):
-                         if not(line.get('email') == "******@gmail.com"):
+                         if not(line.get('email') == "*******@gmail.com"):
                               sender = line
 
           #find subject
@@ -73,23 +74,34 @@ def inboxScan(driver):
                for line in row.findAll('h2'):
                     subject = line
 
-          #check if subject.text contains "Receipt" and if sender.get('email') is from "************@gmail.com"
-          if "Receipt" in subject.text and "**********@gmail.com" in sender.get('email'):
-               #download attachment
-               for row in soup.findAll():
-                    if row.has_attr('download_url'):
-                         attachment = row
-                         aTag = attachment.findAll('a')[0]
-                         driver.execute_script("window.open('"+ aTag.get('href') +"');")
-                         time.sleep(2)
+          #check if subject.text contains "Receipt" and if sender.get('email') is from "********@gmail.com"
+          if "Receipt:" in subject.text and "****************@gmail.com" in sender.get('email'):
+
+               #get file name from subject
+               emailSubject = subject.text
+               fileName = emailSubject.split(":")[1]
+               fileName = fileName.strip()
+
+               #download and name attachment to folder
+               elementR = driver.find_element_by_xpath("//a[@role='link']")
+               actionChains.move_to_element(elementR)
+               actionChains.context_click(elementR).perform()
+               pyautogui.typewrite(['down','down','down','down','enter'])
+               time.sleep(5)
+               pyautogui.typewrite(r"C:\Users\santa\Desktop\bana\{}.txt".format(fileName))
+               pyautogui.typewrite(['enter'])
+               time.sleep(2)
+                         
                #label pertinent
                page_body = driver.find_element_by_tag_name('body')
                page_body.send_keys('v')
+               time.sleep(1)
                driver.find_element_by_xpath("//div[@title='Pertinent']").click()
           else:
                #label nonpertinent
                page_body = driver.find_element_by_tag_name('body')
                page_body.send_keys('v')
+               time.sleep(1)
                driver.find_element_by_xpath("//div[@title='NonPertinent']").click()
           time.sleep(2)
           i +=1
