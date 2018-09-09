@@ -12,10 +12,14 @@ from bs4 import BeautifulSoup as bs
 
 
 #surfacebook and work computer webdriver path
-driver = webdriver.Chrome('C:\Program Files\Python\Python36\chromedriver.exe')
+chrome_options = webdriver.ChromeOptions()
+prefs = {'download.default_directory' : r'C:\Users\santa\Desktop\bana'}
+chrome_options.add_experimental_option('prefs', prefs)
+driver = webdriver.Chrome('C:\Program Files\Python\Python36\chromedriver.exe', chrome_options=chrome_options)
 driver.set_window_size(1900, 1900)
 driver.set_window_position(0, 0)
 driver.get('https://mail.google.com/mail/u/0/#inbox')
+
 
 time.sleep(5)
 
@@ -73,14 +77,19 @@ for row in emailContent:
      for line in row.findAll('h2'):
           print(line)
 
+
+
+
 #download attachment
 for row in soup.findAll():
      if row.has_attr('download_url'):
           attachment = row
           aTag = attachment.findAll('a')[0]
-          print(aTag.get('href'))
+          driver.execute_script("window.open('"+ aTag.get('href') +"');")
+          
+##          aTag = attachment.findAll('a')[0]
+##          print(aTag.get('href'))
 
-          #download url to folder
 
 
 #find label button
