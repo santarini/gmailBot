@@ -28,13 +28,13 @@ time.sleep(5)
 page_body = driver.find_element_by_tag_name('body')
 loginField = driver.find_element_by_id('identifierId')
 nextButton = driver.find_element_by_id('identifierNext')
-loginField.send_keys('eventhandler808')
+loginField.send_keys('username')
 nextButton.click()
 
 time.sleep(3)
 
 passwordField = driver.find_element_by_name('password')
-passwordField.send_keys('Eventdriven2018!')
+passwordField.send_keys('password')
 nextButton = driver.find_element_by_id('passwordNext')
 nextButton.click()
 
@@ -51,59 +51,83 @@ table = soup.findAll('table')[3]
 for row in table.findAll('tr'):
      idList.append(str(row.get('id')))
 
-emailRow = driver.find_element_by_xpath('//*[@id="' + idList[0] + '"]')
+i = 0
+while i < len(idList):
+     time.sleep(3)
+     emailRow = driver.find_element_by_xpath('//*[@id="' + idList[i] + '"]')
 
-emailRow.click()
+     
+     
+     emailRow.click()
 
-time.sleep(1)
+     time.sleep(1)
 
-#identify email body
+     #identify email body
 
-html = driver.page_source
-page_body = driver.find_element_by_tag_name('body')
-soup = bs(html, 'lxml')
-emailContent = soup.findAll('table', {'role': 'presentation'})
+     html = driver.page_source
+     page_body = driver.find_element_by_tag_name('body')
 
-#find sender
- 
-for row in emailContent:
-     for line in row.findAll():
-          if line.has_attr('email'):
-               print(line)
-
-#find subject
-
-for row in emailContent:
-     for line in row.findAll('h2'):
-          print(line)
-
-
-
-
-#download attachment
-for row in soup.findAll():
-     if row.has_attr('download_url'):
-          attachment = row
-          aTag = attachment.findAll('a')[0]
-          driver.execute_script("window.open('"+ aTag.get('href') +"');")
+     soup = bs(html, 'lxml')
           
-##          aTag = attachment.findAll('a')[0]
-##          print(aTag.get('href'))
+     emailContent = soup.findAll('table', {'role': 'presentation'})
+     
+
+     #find sender
+      
+     for row in emailContent:
+          for line in row.findAll():
+               if line.has_attr('email'):
+                    if not(line.get('email') == "***@gmail.com"):
+                         sender = line
+
+     #find subject
+
+     for row in emailContent:
+          for line in row.findAll('h2'):
+               subject = line
+
+     #check if sender.get('email') is from "*****@gmail.com"
+
+     #check if subject.text contains "Receipt"
+     if "Receipt" in subject.text and "*****@gmail.com" in sender.get('email'):
+          #download attachment
+          for row in soup.findAll():
+               if row.has_attr('download_url'):
+                    attachment = row
+                    aTag = attachment.findAll('a')[0]
+                    driver.execute_script("window.open('"+ aTag.get('href') +"');")
+                    time.sleep(2)
+          #label pertinent
+          page_body = driver.find_element_by_tag_name('body')
+          page_body.send_keys('vPertinent' + Keys.ENTER)
+##          html = driver.page_source
+##          page_body = driver.find_element_by_tag_name('body')
+##          soup = bs(html, 'lxml')
+##          time.sleep(1)
+##          labelMenu = soup.findAll('div', {'role': 'menu'})[4]
+##          labelInput = labelMenu.find('input', {'type': 'text'})
+##          labelInput.send_keys('Pertinent/n')
+          #pertinent.click()
+     else:
+          #label nonpertinent
+          page_body = driver.find_element_by_tag_name('body')
+          page_body.send_keys('vNonPertinent' + Keys.ENTER)
+##          page_body.send_keys('v')
+##          html = driver.page_source
+##          page_body = driver.find_element_by_tag_name('body')
+##          soup = bs(html, 'lxml')
+##          time.sleep(1)
+##          labelMenu = soup.findAll('div', {'role': 'menu'})[4]
+##          labelInput = labelMenu.find('input', {'type': 'text'})
+##          labelInput.send_keys('Pertinent/n')
+##          #nonPertinent.click()
+     i +=1
 
 
 
-#find label button
-page_body = driver.find_element_by_tag_name('body')
-##page_body.send_keys('v')
-##
-###navigate to pertinent
-##pertinent = soup.findAll('div', {'title': 'Pertinent'})
-##
-###navigate to nonpertinent
-##nonPertinent = soup.findAll('div', {'title': 'NonPertinent'})
+          #pertinent = soup.find('div', {'title': 'Pertinent'})
+          #nonPertinent = soup.find('div', {'title': 'NonPertinent'})
 
-#pertinent.click()
-#nonPertinent.click()
 
           
 #find email text
