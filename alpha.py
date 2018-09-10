@@ -29,15 +29,16 @@ time.sleep(5)
 page_body = driver.find_element_by_tag_name('body')
 loginField = driver.find_element_by_id('identifierId')
 nextButton = driver.find_element_by_id('identifierNext')
-loginField.send_keys('*********')
+loginField.send_keys('"******')
 nextButton.click()
 
 time.sleep(3)
 
 passwordField = driver.find_element_by_name('password')
-passwordField.send_keys('*********')
+passwordField.send_keys('"******')
 nextButton = driver.find_element_by_id('passwordNext')
 nextButton.click()
+
 
 
 def inboxScan(driver):
@@ -56,9 +57,9 @@ def inboxScan(driver):
      while i < len(idList):
           emailRow = driver.find_element_by_xpath('//*[@id="' + idList[i] + '"]')
           emailRow.click()
-          time.sleep(1)
+          time.sleep(2)
           
-          #identify email body
+          #identify email body for bs4
           html = driver.page_source
           page_body = driver.find_element_by_tag_name('body')
           soup = bs(html, 'lxml')
@@ -68,7 +69,7 @@ def inboxScan(driver):
           for row in emailContent:
                for line in row.findAll():
                     if line.has_attr('email'):
-                         if not(line.get('email') == "*********@gmail.com"):
+                         if not(line.get('email') == ""******@gmail.com"):
                               sender = line
 
           #find subject
@@ -76,8 +77,8 @@ def inboxScan(driver):
                for line in row.findAll('h2'):
                     subject = line
 
-          #check if subject.text contains "Receipt" and if sender.get('email') is from "*********@gmail.com"
-          validEmails = ["**********@gmail.com", "**********@mms.att.net", "**********@dawson8a.com"]
+          #check if subject.text contains "Receipt" and if sender.get('email') is from ""******@gmail.com"
+          validEmails = [""******@gmail.com", "******@mms.att.net", ""******@dawson8a.com"]
           if "Receipt:" in subject.text and any(x in sender.get('email') for x in validEmails):
 
                #get file name from subject
@@ -86,12 +87,15 @@ def inboxScan(driver):
                fileName = fileName.strip()
 
                #download and name attachment to folder
+               time.sleep(4)
                elementR = driver.find_element_by_xpath("//a[@role='link']")
-               actionChains.move_to_element(elementR)
+               actionChains.move_to_element(elementR).perform()
+               elementR = driver.find_element_by_xpath("//a[@role='link']")
                actionChains.context_click(elementR).perform()
+                       
                pyautogui.typewrite(['down','down','down','down','enter'])
                time.sleep(5)
-               pyautogui.typewrite(r"C:\Users\santa\Desktop\bana\{}.txt".format(fileName))
+               pyautogui.typewrite(r"C:\Users\santa\Desktop\bana\{}.jpg".format(fileName))
                pyautogui.typewrite(['enter'])
                time.sleep(2)
                          
@@ -128,7 +132,7 @@ def inboxScan(driver):
                #label pertinent
                page_body = driver.find_element_by_tag_name('body')
                page_body.send_keys('v')
-               time.sleep(1)
+               time.sleep(2)
                driver.find_element_by_xpath("//div[@title='Pertinent']").click()
 
                               
@@ -136,7 +140,7 @@ def inboxScan(driver):
                #label nonpertinent
                page_body = driver.find_element_by_tag_name('body')
                page_body.send_keys('v')
-               time.sleep(1)
+               time.sleep(2)
                driver.find_element_by_xpath("//div[@title='NonPertinent']").click()
 
           time.sleep(2)
