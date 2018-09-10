@@ -9,6 +9,8 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 import pyautogui
 from bs4 import BeautifulSoup as bs
+import os
+import img2pdf
 
 
 #surfacebook and work computer webdriver path
@@ -27,13 +29,13 @@ time.sleep(5)
 page_body = driver.find_element_by_tag_name('body')
 loginField = driver.find_element_by_id('identifierId')
 nextButton = driver.find_element_by_id('identifierNext')
-loginField.send_keys('username')
+loginField.send_keys('*********')
 nextButton.click()
 
 time.sleep(3)
 
 passwordField = driver.find_element_by_name('password')
-passwordField.send_keys('password')
+passwordField.send_keys('*********')
 nextButton = driver.find_element_by_id('passwordNext')
 nextButton.click()
 
@@ -66,7 +68,7 @@ def inboxScan(driver):
           for row in emailContent:
                for line in row.findAll():
                     if line.has_attr('email'):
-                         if not(line.get('email') == "*******@gmail.com"):
+                         if not(line.get('email') == "*********@gmail.com"):
                               sender = line
 
           #find subject
@@ -74,8 +76,9 @@ def inboxScan(driver):
                for line in row.findAll('h2'):
                     subject = line
 
-          #check if subject.text contains "Receipt" and if sender.get('email') is from "********@gmail.com"
-          if "Receipt:" in subject.text and "****************@gmail.com" in sender.get('email'):
+          #check if subject.text contains "Receipt" and if sender.get('email') is from "*********@gmail.com"
+          validEmails = ["**********@gmail.com", "**********@mms.att.net", "**********@dawson8a.com"]
+          if "Receipt:" in subject.text and any(x in sender.get('email') for x in validEmails):
 
                #get file name from subject
                emailSubject = subject.text
@@ -97,11 +100,46 @@ def inboxScan(driver):
                page_body.send_keys('v')
                time.sleep(1)
                driver.find_element_by_xpath("//div[@title='Pertinent']").click()
+
+          elif "Generate Report" in subject.text and any(x in sender.get('email') for x in validEmails):
+               #generate report
+               with open("report.pdf","wb") as f:
+                   f.write(img2pdf.convert([i for i in os.listdir('C:/Users/santa/Desktop/bana/') if i.endswith(".jpg")]))
+
+               #create reply
+               page_body.send_keys('r')
+               time.sleep(3)
+
+               attachButton = driver.find_element_by_xpath('//*[@data-tooltip = "Attach files"]')
+               attachButton.click()
+
+               time.sleep(3)
+
+               pyautogui.typewrite(r"C:\Users\santa\Desktop\bana\report.pdf")
+               pyautogui.typewrite(['enter'])
+
+               time.sleep(3)
+
+               sendButton = driver.find_element_by_xpath('//*[@data-tooltip="Send ‪(Ctrl-Enter)‬"]')
+               sendButton.click()
+
+               time.sleep(3)
+               
+               #label pertinent
+               page_body = driver.find_element_by_tag_name('body')
+               page_body.send_keys('v')
+               time.sleep(1)
+               driver.find_element_by_xpath("//div[@title='Pertinent']").click()
+
+                              
           else:
                #label nonpertinent
                page_body = driver.find_element_by_tag_name('body')
                page_body.send_keys('v')
                time.sleep(1)
                driver.find_element_by_xpath("//div[@title='NonPertinent']").click()
+
           time.sleep(2)
           i +=1
+
+     
