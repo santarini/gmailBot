@@ -11,11 +11,12 @@ import pyautogui
 from bs4 import BeautifulSoup as bs
 import os
 import img2pdf
+import schedule
 
 
 #surfacebook and work computer webdriver path
 chrome_options = webdriver.ChromeOptions()
-prefs = {'download.default_directory' : r'C:\Users\santa\Desktop\bana'}
+prefs = {'download.default_directory' : r'C:\Users\m4k04\Desktop\gmailBot'}
 chrome_options.add_experimental_option('prefs', prefs)
 driver = webdriver.Chrome('C:\Program Files\Python\Python36\chromedriver.exe', chrome_options=chrome_options)
 driver.set_window_size(1900, 1900)
@@ -39,9 +40,10 @@ passwordField.send_keys('pass')
 nextButton = driver.find_element_by_id('passwordNext')
 nextButton.click()
 
-
-
 def inboxScan(driver):
+     #refresh
+     driver.refresh()
+     
      #identify email ids in inbox
      idList = []
      time.sleep(5)
@@ -69,25 +71,16 @@ def inboxScan(driver):
           for row in emailContent:
                for line in row.findAll():
                     if line.has_attr('email'):
-                         if not(line.get('email') == "******@gmail.com"):
+                         if not(line.get('email') == "*****@gmail.com"):
                               sender = line
 
           #find subject
           for row in emailContent:
                for line in row.findAll('h2'):
                     subject = line
-                    
-##          ####TESTING Start
-##          #identify email body for bs4
-##          elementR = driver.find_element_by_xpath("//a[@role='link']")
-##
-##          f = open("GmailBot.txt", "a")
-##          f.write("\n" + elementR.get_attribute('innerHTML'))
-##          f.close()
-##          ####TESTING End
 
           #check if subject.text contains "Receipt" and if sender.get('email') is from "*****@gmail.com"
-          validEmails = ["*******@gmail.com", "******@mms.att.net", "*****@yahoo.com"]
+          validEmails = ["*****@gmail.com", "*****@mms.att.net", "*****@dawson8a.com"]
           if "Receipt:" in subject.text and any(x in sender.get('email') for x in validEmails):
 
                #get file name from subject
@@ -95,73 +88,21 @@ def inboxScan(driver):
                fileName = emailSubject.split(":")[1]
                fileName = fileName.strip()
 
-               #download and name attachment to folder
-               time.sleep(5)
-               #elementR = driver.find_element_by_xpath("//div[contains(text(),'Attachments area')]/following-sibling::div[2]/span/a")
-     
-               
-               #elementR = driver.find_element_by_xpath("//a[@role='link']")
-
-               ####TESTING Start
-               #identify email body for bs4
-               #elementR = driver.find_element_by_xpath("//a[@role='link']")
+               #LOCATE  and download and name attachment to path
+               time.sleep(1)
                page_body = driver.find_element_by_tag_name('body')
                page_body.send_keys(Keys.TAB)
-               time.sleep(2)
+               page_body.send_keys(Keys.TAB)
+               page_body.send_keys(Keys.TAB)
+               page_body.send_keys(Keys.TAB)
+               page_body.send_keys(Keys.TAB)
+               page_body.send_keys(Keys.TAB)
                page_body.send_keys(Keys.TAB)
                time.sleep(2)
-               page_body.send_keys(Keys.TAB)
-               time.sleep(2)
-               page_body.send_keys(Keys.TAB)
-               time.sleep(2)
-               page_body.send_keys(Keys.TAB)
-               time.sleep(2)
-               page_body.send_keys(Keys.TAB)
-               time.sleep(2)
-               page_body.send_keys(Keys.TAB)
                actionChains.send_keys(Keys.SHIFT + Keys.F10).perform()
-
-               #elementParentHover = driver.find_element_by_xpath("//div[contains(text(),'Attachments area')]/following-sibling::div[2]/span")
-               #actionChains.move_to_element(elementParentHover).perform()
-               #time.sleep(2)
-               #elementR = driver.find_element_by_xpath("//div[contains(text(),'Attachments area')]/following-sibling::div[2]/span/a")
-               time.sleep(2)
-##               f = open("GmailBot.txt", "a")
-##               f.write("\n" + elementR.get_attribute('innerHTML'))
-##               f.close()
-               ####TESTING End
-
-               #click page
-
-
-##               ####TESTING Start
-##               #identify email body for bs4
-##               #elementR = driver.find_element_by_xpath("//a[@role='link']")
-##               elementR = driver.find_element_by_xpath("//div[contains(text(),'Attachments area')]/following-sibling::div[2]/span/a")
-##
-##               f = open("GmailBot.txt", "a")
-##               f.write("\n" + elementR.get_attribute('innerHTML'))
-##               f.close()
-##               ####TESTING End
-               
-               #elementR = driver.find_element_by_xpath("//a[@role='link']")
-               #elementR = driver.find_element_by_xpath("//div[contains(text(),'Attachments area')]/following-sibling::div[2]/span/a")
-
-##               ####TESTING Start
-##               #identify email body for bs4
-##               #elementR = driver.find_element_by_xpath("//a[@role='link']")
-##               elementR = driver.find_element_by_xpath("//div[contains(text(),'Attachments area')]/following-sibling::div[2]/span/a")
-##
-##               f = open("GmailBot.txt", "a")
-##               f.write("\n" + elementR.get_attribute('innerHTML'))
-##               f.close()
-##               ####TESTING End
-               
-               #actionChains.context_click(elementR).perform()
-               #time.sleep(2)
                pyautogui.typewrite(['down','down','down','down', 'enter'])
                time.sleep(5)
-               pyautogui.typewrite(r"C:\Users\santa\Desktop\bana\{}.jpg".format(fileName))
+               pyautogui.typewrite(r"C:\Users\m4k04\Desktop\gmailBot\{}.jpg".format(fileName))
                pyautogui.typewrite(['enter'])
                time.sleep(2)
                          
@@ -175,7 +116,7 @@ def inboxScan(driver):
           elif "Generate Report" in subject.text and any(x in sender.get('email') for x in validEmails):
                #generate report
                with open("report.pdf","wb") as f:
-                   f.write(img2pdf.convert([i for i in os.listdir('C:/Users/santa/Desktop/bana/') if i.endswith(".jpg")]))
+                   f.write(img2pdf.convert([i for i in os.listdir(r'C:/Users/m4k04/Desktop/gmailBot') if i.endswith(".jpg")]))
 
                #create reply
                page_body.send_keys('r')
@@ -186,7 +127,7 @@ def inboxScan(driver):
 
                time.sleep(3)
 
-               pyautogui.typewrite(r"C:\Users\santa\Desktop\bana\report.pdf")
+               pyautogui.typewrite(r"C:\Users\m4k04\Desktop\gmailBot\report.pdf")
                pyautogui.typewrite(['enter'])
 
                time.sleep(3)
@@ -214,4 +155,16 @@ def inboxScan(driver):
 
           time.sleep(2)
           i +=1
-inboxScan(driver)
+     timeNow = datetime.datetime.now().strftime("%H:%M:%S")
+     print("Gmail Scanned at: " + str(timeNow))
+
+     
+
+schedule.every(5).minutes.do(inboxScan, driver=driver)
+#schedule.every().hour.do(inboxScan(driver))
+
+#schedule.every().day.at("10:30").do(inboxScan(driver))
+
+
+while True:
+     schedule.run_pending()
